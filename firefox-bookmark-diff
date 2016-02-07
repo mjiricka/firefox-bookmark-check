@@ -1,0 +1,98 @@
+#!/bin/env python
+
+"""Script for analyzing Firefox Bookmark File."""
+
+import sys
+import json
+
+
+def print_sign(title):
+    print('=====================================================')
+    print('  '+title)
+    print('=====================================================')
+    print()
+
+
+def read_urls(js):
+    urls = []
+    if js['type'] == 'text/x-moz-place':
+        msg = js['uri']
+        if msg[0:4] == 'http':
+            urls.append(msg)
+    else:
+        if 'children' in js:
+            for child in js['children']:
+                urls = urls + read_urls(child)
+    return urls
+
+
+def print_empty_dirs(js):
+    count = 0
+    if js['type'] == 'text/x-moz-place-container':
+        if 'children' in js:
+            for child in js['children']:
+                count = count + print_empty_dirs(child)
+        else:
+            print(js['title'])
+            return 1
+    return count
+
+
+def print_duplicates(urls):
+    seen = set()
+    for url in urls:
+        if url in seen:
+            print(url)
+        else:
+            seen.add(url)
+
+
+if len(sys.argv) != 3:
+    print('Usage: {0} <older_bookmarks> <newer_bookmarks>'.format(sys.argv[0]))
+    sys.exit()
+
+# Read both files.
+with open(sys.argv[1], 'r') as f:
+    older = json.load(f)
+with open(sys.argv[2], 'r') as f:
+    newer = json.load(f)
+
+# First check empty dirs.
+print_sign('Empty dirs')
+numEmptyDirs = print_empty_dirs(newer)
+if numEmptyDirs == 0:
+    print('[None]')
+
+print()
+print()
+
+# Then compare files.
+olderUrls = read_urls(older)
+newerUrls = read_urls(newer)
+olderUrlsSet = set(olderUrls)
+newerUrlsSet = set(newerUrls)
+
+
+# Print info about deleted/added urls.
+
+print_sign('Deleted urls')
+deleted = olderUrlsSet - newerUrlsSet
+if 0 < len(deleted):
+    for url in deleted:
+        print(url)
+else:
+    print('[None]')
+
+print()
+print()
+
+print_sign('Added urls')
+added = newerUrlsSet - olderUrlsSet
+if 0 < len(added):
+    for url in added:
+        print(url)
+else:
+    print('[None]')
+
+
+# EOF
