@@ -68,30 +68,28 @@ with open(sys.argv[2], 'r') as f:
 
 # First check empty dirs.
 print_sign('Empty dirs')
-numEmptyDirs = print_empty_dirs(newer)
-if numEmptyDirs == 0:
+num_empty_dirs = print_empty_dirs(newer)
+if num_empty_dirs == 0:
     print('[None]')
 
 print()
 print()
 
 # Then compare files.
-olderUrls = read_urls(older)
-newerUrls = read_urls(newer)
-olderUrlsSet = set(olderUrls)
-newerUrlsSet = set(newerUrls)
+older_url_set = set(read_urls(older))
+newer_url_set = set(read_urls(newer))
 
 
 # Print info about deleted/added urls.
 
 print_sign('Deleted urls')
-print_diff(olderUrlsSet, newerUrlsSet)
+print_diff(older_url_set, newer_url_set)
 
 print()
 print()
 
 print_sign('Added urls')
-print_diff(newerUrlsSet, olderUrlsSet)
+print_diff(newer_url_set, older_url_set)
 
 
 # EOF
