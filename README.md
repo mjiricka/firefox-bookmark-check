@@ -12,7 +12,9 @@ In my case:
 Now I export them from time to time and compare the newly expored file
 with the former one with this simple script. The script finds all empty
 directories in newer file and prints also which bookmarks were deleted
-(or lost) and which were added.
+(or lost) and which were added, so I can check what has changed.
+
+Unfortunately recovering lost URLs must be done manually ;)
 
 
 ## Usage
