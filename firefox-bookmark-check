@@ -47,6 +47,15 @@ def print_duplicates(urls):
             seen.add(url)
 
 
+def print_diff(url_set_a, url_set_b):
+    diff = url_set_a - url_set_b
+    if 0 < len(diff):
+        for url in diff:
+            print(url)
+    else:
+        print('[None]')
+
+
 if len(sys.argv) != 3:
     print('Usage: {0} <older_bookmarks> <newer_bookmarks>'.format(sys.argv[0]))
     sys.exit()
@@ -76,23 +85,13 @@ newerUrlsSet = set(newerUrls)
 # Print info about deleted/added urls.
 
 print_sign('Deleted urls')
-deleted = olderUrlsSet - newerUrlsSet
-if 0 < len(deleted):
-    for url in deleted:
-        print(url)
-else:
-    print('[None]')
+print_diff(olderUrlsSet, newerUrlsSet)
 
 print()
 print()
 
 print_sign('Added urls')
-added = newerUrlsSet - olderUrlsSet
-if 0 < len(added):
-    for url in added:
-        print(url)
-else:
-    print('[None]')
+print_diff(newerUrlsSet, olderUrlsSet)
 
 
 # EOF
